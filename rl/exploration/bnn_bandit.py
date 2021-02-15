@@ -1,13 +1,13 @@
 import os
+
 os.environ["KMP_DUPLICATE_LIB_OK"] = "True"
 import numpy as np
 from matplotlib import pyplot as plt
-from pandas import DataFrame
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import torchbnn as bnn
-
+from utility import moving_average
 
 """
 基本思路是：
@@ -17,10 +17,14 @@ import torchbnn as bnn
 4. 使用cross entropy和KL-divergence的组合作为代价函数，对神经网络剧进行梯度下降的训练
 """
 
-class BNNAgent:
+
+class BNNThompsonAgent:
     """ a bandit with bayesian neural net
     基于pytorch搭建bayesian神经网络，使用的库是torchbnn，github地址为：https://github.com/Harry24k/bayesian-neural-network-pytorch
+
+    这里使用的是Thompson Sampling，也就是利用BNN根据输入状态做一次采样；也可以使用多次采样求期望或者分位数的方式。
     """
+
     def __init__(self, state_features_size, action_features_size):
         self.n_states = state_features_size
         self.n_actions = action_features_size
@@ -46,6 +50,12 @@ class BNNAgent:
         - 1-epsilon的概率，利用
         - epsilon的概率, 探索
         核心在于：对（状态、动作）对应的奖励期望进行比较，视期望最高的动作为当前状态下的最优动作
+
+        其实也完全可以使用：thompson，UCB等方法。核心区别在于——是否需要多次采样：
+        - 只有一次，那么认为是基于BNN的Thompson采样，传统是基于Beta分布
+        - 多次采样，又可以分为两种：
+          - 求期望，作为该动作的最终reward。
+          - 使用指定分位数对应的值。其实就是UCB
 
         :param pred_actions: 针对输入状态，由神经网络输出的各个actions分类中的数值
         :returns: 矢量，记录states中各个状态对应的，选择的动作
@@ -97,10 +107,6 @@ def get_new_samples(states, act_rewards, batch_size=10):
     return states[batch_ix], act_rewards[batch_ix]
 
 
-moving_average = lambda x, **kw: DataFrame(
-    {'x': np.asarray(x)}).x.ewm(**kw).mean().values
-
-
 def train_contextual_agent(agent, record_states, record_action_rewards, batch_size=10, n_iters=100):
     """ 基于神经网络训练agent
 
@@ -142,7 +148,7 @@ def train_contextual_agent(agent, record_states, record_action_rewards, batch_si
                   (i, np.mean(rewards_history[-10:]), mse, kl))
             plt.plot(rewards_history)
             plt.plot(moving_average(np.array(rewards_history), alpha=0.1))
-            plt.title("Reward per epesode")
+            plt.title("Reward per episode")
             plt.xlabel("Episode")
             plt.ylabel("Reward")
             plt.show()
@@ -160,7 +166,7 @@ if __name__ == '__main__':
     print(action_rewards)
 
     # 创建神经网络
-    bnn_agent = BNNAgent(state_size, n_actions)
+    bnn_agent = BNNThompsonAgent(state_size, n_actions)
 
     # 训练
     train_contextual_agent(bnn_agent, all_states, action_rewards, 100, n_iterations)
