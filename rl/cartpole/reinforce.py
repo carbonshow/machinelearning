@@ -4,7 +4,10 @@ import torch.optim as optim
 from replay_buffer import Transition
 
 
-class QLearn(object):
+class Reinforce(object):
+    """
+    Policy-base 强化学习策略，
+    """
     BATCH_SIZE = 128
     GAMMA = 0.999
     TARGET_UPDATE = 10
