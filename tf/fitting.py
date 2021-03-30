@@ -59,7 +59,7 @@ class FitExample(AbstractModel):
         return "fit"
 
     def model_name(self):
-        return "example"
+        return "default"
 
     def run(self):
         # 载入数据作为训练集和验证集

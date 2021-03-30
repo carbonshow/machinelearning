@@ -1,8 +1,9 @@
 import sys
 
 from classification import ClassificationDefault, ClassificationFashion
-from regression import RegressionDefault
 from fitting import FitExample
+from regression import RegressionDefault
+from save_load import SaveLoadExample
 
 
 def register_module():
@@ -11,7 +12,8 @@ def register_module():
     :returns: 返回dict，key是(module type, module name)，value是module对象
     """
     # 创建模块对象，在这里添加
-    registered_modules = [ClassificationDefault(), ClassificationFashion(), RegressionDefault(), FitExample()]
+    registered_modules = [ClassificationDefault(), ClassificationFashion(), RegressionDefault(), FitExample(),
+                          SaveLoadExample()]
 
     # 返回处理过的列表
     return {(m.model_type(), m.model_name()): m for m in registered_modules}
