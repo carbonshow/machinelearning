@@ -147,9 +147,9 @@ class ClassificationFashion(AbstractModel):
         plt.grid(False)
         plt.xticks(range(10))
         plt.yticks([])
-        thisplot = plt.bar(range(10), predictions_array, color="#777777")
+        this_plot = plt.bar(range(10), predictions_array, color="#777777")
         plt.ylim([0, 1])
         predicted_label = np.argmax(predictions_array)
 
-        thisplot[predicted_label].set_color('red')
-        thisplot[true_label].set_color('blue')
+        this_plot[predicted_label].set_color('red')
+        this_plot[true_label].set_color('blue')

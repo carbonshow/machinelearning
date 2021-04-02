@@ -12,7 +12,6 @@ class PrintDot(keras.callbacks.Callback):
     """ 训练过程展示进度的回调
     通过为每个完成的时期打印一个点来显示训练进度
     """
-
     def on_epoch_end(self, epoch, logs=None):
         if epoch % 100 == 0:
             print('')

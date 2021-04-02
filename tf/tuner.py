@@ -5,10 +5,15 @@ from tensorflow import keras
 from abstract_model import AbstractModel
 
 """
-依赖keras-tuner，这是一个协助hyper-parameters调优的库。超参数影响机器学习的整个过程以及模型拓扑，这些参数在整个训练过程中是常量。
-keras-tuner则用来对这些参数调优。适合于：
+依赖keras-tuner，这是一个协助hyper-parameters调优的库。超参数和模型参数不同，模型参数是在学习过程中得到的；超参数影响机器学习的整个
+过程以及模型拓扑，这些参数在整个训练过程中是常量。keras-tuner则用来对这些参数调优。适合于：
 - 模型参数。影响隐藏层（hidden layers）的数量，宽度（神经元数量）等
 - 算法参数。影响学习的速度和质量
+
+本例中对以下学习过程的参数进行调优：
+- 神经层的宽度，即神经数量。在指定范围内调优。
+- learning rate。在指定候选项中调优
+- 训练迭代次数。即Epoch
 """
 
 
@@ -66,6 +71,11 @@ class TunerExample(AbstractModel):
 
     @staticmethod
     def create_model(hp):
+        """ 创建训练模型，指定需要调优的参数
+        对Dense Layer的宽度，以及学习率设置调优
+        :param hp: hyper parameters
+        :return: 支持调优的模型
+        """
         model = keras.Sequential()
         model.add(keras.layers.Flatten(input_shape=(28, 28)))
 
