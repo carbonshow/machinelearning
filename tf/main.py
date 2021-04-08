@@ -5,7 +5,7 @@ from fitting import FitExample
 from regression import RegressionDefault
 from save_load import SaveLoadExample
 from tuner import TunerExample
-
+from recommender import RecommenderDefault
 
 def register_module():
     """
@@ -14,7 +14,7 @@ def register_module():
     """
     # 创建模块对象，在这里添加
     registered_modules = [ClassificationDefault(), ClassificationFashion(), RegressionDefault(), FitExample(),
-                          SaveLoadExample(), TunerExample()]
+                          SaveLoadExample(), TunerExample(), RecommenderDefault()]
 
     # 返回处理过的列表
     return {(m.model_type(), m.model_name()): m for m in registered_modules}
